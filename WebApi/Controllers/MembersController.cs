@@ -45,4 +45,11 @@ public class MembersController
         var result = await memService.GetMemberByIdAsync(Id);
         return result;
     }
+
+    [HttpGet("The Active Member")]
+    public async Task<List<Members>> GetTheActiveMember()
+    {
+        return await memService.GetTheActiveMember();
+    }
+    
 }

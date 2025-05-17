@@ -124,4 +124,73 @@ public class BorrowingsService : IBorrowingsService
             return result.ToList();
         }
     }
+
+    public async Task<int> GetCountOfBorrowings()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select count(*) from borrowings
+                                where returnDate < Duedate";
+            var result = await connection.ExecuteScalarAsync<int>(cmd);
+            return result;
+        }
+    }
+
+    public async Task<int> GetAvgSumForLate()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"SELECT AVG(EXTRACT(DAY FROM (ReturnDate - DueDate)) * 1.5)
+                                    FROM Borrowings
+                                    WHERE ReturnDate > DueDate;
+                                    ";
+            var result = await connection.ExecuteScalarAsync<int>(cmd);
+            return result;
+        }
+    }
+
+    public async Task<List<Borrowings>> GetNotReturnedBooks()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"SELECT b.BorrowingId, b.BookId, b.MemberId, b.BorrowDate, b.DueDate
+                                    FROM Borrowings b
+                                    WHERE b.ReturnDate IS NULL;
+                                    ";
+            var result = await connection.QueryAsync<Borrowings>(cmd);
+            return result.ToList();
+        }
+    }
+
+    public async Task<List<Borrowings>> GetBooksWithoutCopies()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select b.BookId, b.Title, b.Genre from Borrowings bo
+                                join Books b on b.BokkId = bo.BookId
+                                where Totalcopies < 2";
+            var result = await connection.QueryAsync<Borrowings>(cmd);
+            return result.ToList();
+        }
+    }
+
+    public async Task<int> GetBooksWithoutGeting()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"sSELECT COUNT(*) 
+                                    FROM Books b
+                                    WHERE NOT EXISTS (
+                                        SELECT 1 FROM Borrowings br WHERE br.BookId = b.Id
+                                    );
+                                    ";
+            var result = await connection.ExecuteScalarAsync<int>(cmd);
+            return result;
+        }
+    }
 }

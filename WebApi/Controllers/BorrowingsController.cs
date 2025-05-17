@@ -38,4 +38,34 @@ public class BorrowingsController
         var result = await borrService.GetBorrowingsById(memberId);
         return result;
     }
+
+    [HttpGet("Count")]
+    public async Task<int> GetCountOfBorrowings()
+    {
+        return await borrService.GetCountOfBorrowings();
+    }
+
+    [HttpGet("Avg")]
+    public async Task<int> GetAvgSumForLate()
+    {
+        return await borrService.GetAvgSumForLate();
+    }
+
+    [HttpGet("NoRturned")]
+    public async Task<List<Borrowings>> GetNotReturnedBooks()
+    {
+        return await borrService.GetNotReturnedBooks();
+    }
+
+    [HttpGet("NoCopiesBooks")]
+    public async Task<List<Borrowings>> GetBooksWithoutCopies()
+    {
+        return await borrService.GetBooksWithoutCopies();
+    }
+
+    [HttpGet("BooksWithoutGeting")]
+    public async Task<int> GetBooksWithoutGeting()
+    {
+        return await borrService.GetBooksWithoutGeting();
+    }
 }
