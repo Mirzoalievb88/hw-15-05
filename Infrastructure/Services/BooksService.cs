@@ -56,12 +56,25 @@ public class BooksService : IBooksService
     }
 
 
-    // public async Task<Books?> GetBookByIdAsync(int id)
-    // {
-    //     using var connection = await context.GetConnectionAsync();
-    //     var cmd = @"select * from books
-    //                 where bookid = @bookid";
-    //     var result = await connection.QuerySingleOrDefaultAsync<Books>(cmd, new { bookid = id });
-    //     return result;
-    // }
+    public async Task<Books?> GetBookByIdAsync(int id)
+    {
+        using var connection = await context.GetConnectionAsync();
+        var cmd = @"select * from books
+                    where bookid = @bookid";
+        var result = await connection.QuerySingleOrDefaultAsync<Books>(cmd, new { bookid = id });
+        return result;
+    }
+
+    public async Task<List<Books>> GetThePopularBook()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select count(b.*), bk.* from books bk
+                                join borrowings b on b.BookId = bk.BookId
+                                group by bk.bookId";
+            var result = await connection.QueryAsync<Books>(cmd);
+            return result.ToList();
+        }
+    }
 }

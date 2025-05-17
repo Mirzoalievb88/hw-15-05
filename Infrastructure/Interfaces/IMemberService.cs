@@ -8,5 +8,6 @@ public interface IMemberService
     Task<List<Members>> GetMembersAsync();
     Task<int> UpdateMembersAsync(Members members);
     Task<int> DeleteMembersByIdAsync(int Id);
-    // Task<List<Members>> GetMemberByIdAsync(int Id);
+    Task<List<Members>> GetMemberByIdAsync(int Id);
+    Task<List<Members>> GetTheActiveMember();
 }

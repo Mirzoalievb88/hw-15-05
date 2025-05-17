@@ -13,3 +13,4 @@ C:\Users\Bahodur\Desktop\hw-14-05\Infrastructure\obj\Debug\net9.0\Infrastructure
 C:\Users\Bahodur\Desktop\hw-14-05\Infrastructure\obj\Debug\net9.0\refint\Infrastructure.dll
 C:\Users\Bahodur\Desktop\hw-14-05\Infrastructure\obj\Debug\net9.0\Infrastructure.pdb
 C:\Users\Bahodur\Desktop\hw-14-05\Infrastructure\obj\Debug\net9.0\ref\Infrastructure.dll
+C:\Users\Bahodur\Desktop\hw-14-05\Infrastructure\obj\Debug\net9.0\Infrastructure.sourcelink.json

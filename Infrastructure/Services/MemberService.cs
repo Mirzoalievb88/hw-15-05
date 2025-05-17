@@ -57,15 +57,31 @@ public class MemberService : IMemberService
         }
     }
 
-    // public async Task<List<Members>> GetMemberByIdAsync(int Id)
-    // {
-    //     using (var connection = await context.GetConnectionAsync())
-    //     {
-    //         connection.Open();
-    //         var cmd = @$"select * from Members
-    //                             where MemberId = @Id";
-    //         var result = await connection.QueryAsync<Members>(cmd, @Id = Id);
-    //         return result.ToList();
-    //     }
-    // }
+    public async Task<List<Members>> GetMemberByIdAsync(int Id)
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select * from Members
+                                where MemberId = @Id";
+            var result = await connection.QueryAsync<Members>(cmd, @Id = Id);
+            return result.ToList();
+        }
+    }
+
+    public async Task<List<Members>> GetTheActiveMember()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"SELECT m.*
+                                FROM Members m
+                                JOIN Borrowings b ON m.MemberId = b.MemberId
+                                GROUP BY m.MemberId
+                                ORDER BY COUNT(b.BorrowingId) DESC
+                                LIMIT 1;";
+            var result = await connection.QueryAsync<Members>(cmd);
+            return result.ToList();
+        }
+    }
 }

@@ -19,12 +19,12 @@ public class BooksController
         return result;
     }
 
-    // [HttpGet("{id}")]
-    // public async Task<Books?> GetBookAsyncById(int id)
-    // {
-    //     var result = await bookService.GetBookByIdAsync(id);
-    //     return result;
-    // }
+    [HttpGet("{id}")]
+    public async Task<Books?> GetBookAsyncById(int id)
+    {
+        var result = await bookService.GetBookByIdAsync(id);
+        return result;
+    }
 
     [HttpPost]
     public async Task<int> CreateBookAsync(Books books)
@@ -42,6 +42,13 @@ public class BooksController
     public async Task<int> DeleteBookAsync(int Id)
     {
         var result = await bookService.DeleteBookAsync(Id);
+        return result;
+    }
+
+    [HttpGet("Popular Book")]
+    public async Task<List<Books>> GetThePopularBook()
+    {
+        var result = await bookService.GetThePopularBook();
         return result;
     }
 }

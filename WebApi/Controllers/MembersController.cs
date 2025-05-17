@@ -39,10 +39,10 @@ public class MembersController
         return result;
     }
 
-    // [HttpGet]
-    // public async Task<List<Members>> GetMembersByIdAsync(int Id)
-    // {
-    //     var result = await memService.GetMemberByIdAsync(Id);
-    //     return result;
-    // }
+    [HttpGet("{id}")]
+    public async Task<List<Members>> GetMembersByIdAsync(int Id)
+    {
+        var result = await memService.GetMemberByIdAsync(Id);
+        return result;
+    }
 }

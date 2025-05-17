@@ -12,31 +12,30 @@ public class BorrowingsController
 {
     private BorrowingsService borrService = new BorrowingsService();
 
-    [HttpGet]
-    public async Task<List<Borrowings>> GetBorrowingMemberByIdAsync(int Id)
+    [HttpGet("Id")]
+    public async Task<string> ReturnBookAsync(int BorrowingId)
     {
-        var result = await borrService.GetBorrowingMemberByIdAsync(Id);
-        return result;
+        return await borrService.ReturnBookAsync(BorrowingId);
     }
-
+    
+    
     [HttpPost]
-    public async Task<int> CreateBorrowingsAsync(Borrowings borrowings)
+    public async Task<string> CreateBorrowingAsync(Borrowings borrowings)
     {
-        var result = await borrService.CreateBorrowingsAsync(borrowings);
+        return await borrService.CreateBorrowingAsync(borrowings);
+    }
+
+    [HttpGet]
+    public async Task<List<Borrowings>> GetAllBorrowings()
+    {
+        var result = await borrService.GetAllBorrowings();
         return result;
     }
 
-    // [HttpGet]
-    // public async Task<List<Borrowings>> GetBorrowingsAsync()
-    // {
-    //     var result = await borrService.GetBorrowingsAsync();
-    //     return result;
-    // }
-
-    // [HttpGet]
-    // public async Task<List<Borrowings>> GetBorrowingsWithFiltre()
-    // {
-    //     var result = await borrService.GetBorrowingsWithFiltre();
-    //     return result;
-    // }
+    [HttpGet("By memberId")]
+    public async Task<List<Borrowings>> GetBorrowingsById(int memberId)
+    {
+        var result = await borrService.GetBorrowingsById(memberId);
+        return result;
+    }
 }

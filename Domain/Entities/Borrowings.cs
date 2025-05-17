@@ -7,6 +7,6 @@ public class Borrowings
     public int MemberId { get; set; }
     public DateTime BorrowDate { get; set; }
     public DateTime DueDate { get; set; }
-    public DateTime ReturnDate { get; set; }
+    public DateTime? ReturnDate { get; set; }
     public decimal Fine { get; set; }
 }

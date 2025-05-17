@@ -10,5 +10,6 @@ public interface IBooksService
     Task<List<Books>> GetBooksAsync();
     Task<int> UpdateBookAsync(Books books);
     Task<int> DeleteBookAsync(int Id);
-    // Task<Books> GetBookByIdAsync(int Id);
+    Task<Books> GetBookByIdAsync(int Id);
+    Task<List<Books>> GetThePopularBook();
 }
