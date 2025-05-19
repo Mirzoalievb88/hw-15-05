@@ -8,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IBooksService, BooksService>();
 
 // Add services to the container.
+
+builder.Services.AddScoped<DataContext>();
+
+builder.Services.AddScoped<BooksService>();      
+builder.Services.AddScoped<BorrowingsService>();      
+builder.Services.AddScoped<MemberService>();      
+
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();

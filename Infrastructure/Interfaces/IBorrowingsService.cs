@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.DTO;
 
 namespace Infrastructure.Interfaces;
 
@@ -13,4 +14,10 @@ public interface IBorrowingsService
     Task<List<Borrowings>> GetNotReturnedBooks();
     Task<List<Borrowings>> GetBooksWithoutCopies();
     Task<int> GetBooksWithoutGeting();
+    Task<int> GetCountOfBorrowingsWithMember();
+    Task<ReaderDto> GetFirstReaderWithOverdueAsync();
+    Task<List<Borrowings>> GetTopFiveMembers();
+    Task<int> GetAllWtraff();
+    Task<int> GetBooksWithRasrochka();
+    Task<List<Borrowings>> GetMembersWhoPay();
 }

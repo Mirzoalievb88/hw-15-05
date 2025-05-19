@@ -8,10 +8,8 @@ namespace WebApi.Controllers;
 [Route("api/[controller]")]
 
 
-public class BooksController
-{
-    private BooksService bookService = new BooksService();
-    
+public class BooksController(BooksService bookService)
+{   
     [HttpGet]
     public async Task<List<Books>> GetBooksAsync()
     {
@@ -50,5 +48,11 @@ public class BooksController
     {
         var result = await bookService.GetThePopularBook();
         return result;
+    }
+
+    [HttpGet("BooksAndCounts")]
+    public async Task<List<Books>> GetBooksAndBorrowingsCount()
+    {
+        return await bookService.GetBooksAndBorrowingsCount();
     }
 }

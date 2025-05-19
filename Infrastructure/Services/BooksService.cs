@@ -6,10 +6,8 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Services;
 
-public class BooksService : IBooksService
+public class BooksService(DataContext context) : IBooksService
 {
-    private readonly DataContext context = new DataContext();
-
     public async Task<int> CreateBookAsync(Books books)
     {
         using (var connection = await context.GetConnectionAsync())
@@ -73,6 +71,38 @@ public class BooksService : IBooksService
             var cmd = @$"select count(b.*), bk.* from books bk
                                 join borrowings b on b.BookId = bk.BookId
                                 group by bk.bookId";
+            var result = await connection.QueryAsync<Books>(cmd);
+            return result.ToList();
+        }
+    }
+
+    public async Task<string> GetMostPopularGenre()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"Select b.Genre
+                                    from Borrowings br
+                                    join Books b ON br.BookId = b.Id
+                                    Group By b.Genre
+                                    Order By Count(*) Desc
+                                    limit 1;
+                                ";
+            var result = await connection.QueryFirstOrDefaultAsync<string>(cmd);
+            return result;
+        }
+    }
+
+    public async Task<List<Books>> GetBooksAndBorrowingsCount()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select b.Id, b.Title, b.Author
+                                    from Books b
+                                    join Borrowings br ON b.Id = br.BookId
+                                    group BY b.Id, b.Title, b.Author
+                                    having count(*) > 5";
             var result = await connection.QueryAsync<Books>(cmd);
             return result.ToList();
         }

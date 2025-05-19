@@ -1,16 +1,16 @@
 using Domain.Entities;
+using Domain.DTO;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
 using Npgsql;
 using Dapper;
 using System.Data.Common;
+using Domain.DTO;
 
 namespace Infrastructure.Services;
 
-public class BorrowingsService : IBorrowingsService
+public class BorrowingsService(DataContext context) : IBorrowingsService
 {
-    private readonly DataContext context = new DataContext();
-
     public async Task<List<Borrowings>> GetAllBorrowingsAsync()
     {
         using (var connection = await context.GetConnectionAsync())
@@ -191,6 +191,91 @@ public class BorrowingsService : IBorrowingsService
                                     ";
             var result = await connection.ExecuteScalarAsync<int>(cmd);
             return result;
+        }
+    }
+
+    public async Task<int> GetCountOfBorrowingsWithMember()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select count(b.*), m.* from borrowings b
+                                group by m.memberId";
+            var result = await connection.ExecuteScalarAsync<int>(cmd);
+            return result;
+        }
+    }
+
+    public async Task<ReaderDto> GetFirstReaderWithOverdueAsync()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"SELECT r.Id, r.Name
+                                    FROM Readers r
+                                    JOIN Borrowings b ON r.Id = b.ReaderId
+                                    WHERE b.ReturnDate > b.DueDate
+                                    ORDER BY b.ReturnDate
+                                    LIMIT 1;
+                                ";
+            var result = await connection.QueryFirstOrDefaultAsync<ReaderDto>(cmd);
+            return result!;
+        }
+    }
+
+    public async Task<List<Borrowings>> GetTopFiveMembers()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select m.* from Borrowings br
+                                join Members m on m.memberId = br.memberId
+                                limit 5";
+            var result = await connection.QueryAsync<Borrowings>(cmd);
+            return result.ToList();
+        }
+    }
+
+    public async Task<int> GetAllWtraff()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select sum(extract(day from (ReturnDate - DueDate)) * 1.0)
+                                    from Borrowings
+                                    where ReturnDate > DueDate;
+                                ";
+            var result = await connection.QuerySingleOrDefaultAsync<int>(cmd);
+            return result;
+        }
+    }
+
+    public async Task<int> GetBooksWithRasrochka()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select b.* from Borrowings br
+                                join Books b on b.bookId = br.bookId
+                                where br.returnDate > br.DueDate";
+            var result = await connection.ExecuteScalarAsync<int>(cmd);
+            return result;
+        }
+    }
+
+    public async Task<List<Borrowings>> GetMembersWhoPay()
+    {
+        using (var connection = await context.GetConnectionAsync())
+        {
+            connection.Open();
+            var cmd = @$"select  distinct m.MemberId, m.FullName
+                                    from Members m
+                                    join Borrowings b ON r.Id = b.ReaderId
+                                    where b.ReturnDate > b.DueDate
+                                    and b.Fine > 0;
+                                ";
+            var result = await connection.QueryAsync<Borrowings>(cmd);
+            return result.ToList();
         }
     }
 }
