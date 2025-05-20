@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using Domain.ApiResponse;
 using Domain.Entities;
 using Infrastructure.Data;
 
@@ -6,12 +7,12 @@ namespace Infrastructure.Interfaces;
 
 public interface IBooksService
 {
-    Task<int> CreateBookAsync(Books books);
-    Task<List<Books>> GetBooksAsync();
-    Task<int> UpdateBookAsync(Books books);
-    Task<int> DeleteBookAsync(int Id);
-    Task<Books> GetBookByIdAsync(int Id);
-    Task<List<Books>> GetThePopularBook();
-    Task<string> GetMostPopularGenre();
-    Task<List<Books>> GetBooksAndBorrowingsCount();
+    Task<Response<string>> CreateBookAsync(Books books);
+    Task<Response<List<Books>>> GetBooksAsync();
+    Task<Response<string>> UpdateBookAsync(Books books);
+    Task<Response<string>> DeleteBookAsync(int Id);
+    Task<Response<Books>> GetBookByIdAsync(int Id);
+    Task<Response<List<Books>>> GetThePopularBook();
+    Task<Response<string>> GetMostPopularGenre();
+    Task<Response<List<Books>>> GetBooksAndBorrowingsCount();
 }

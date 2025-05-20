@@ -1,13 +1,14 @@
+using Domain.ApiResponse;
 using Domain.Entities;
 
 namespace Infrastructure.Interfaces;
 
 public interface IMemberService
 {
-    Task<int> CreateMemberAsync(Members members);
-    Task<List<Members>> GetMembersAsync();
-    Task<int> UpdateMembersAsync(Members members);
-    Task<int> DeleteMembersByIdAsync(int Id);
-    Task<List<Members>> GetMemberByIdAsync(int Id);
-    Task<List<Members>> GetTheActiveMember();
+    Task<Response<int>> CreateMemberAsync(Members members);
+    Task<Response<List<Members>>> GetMembersAsync();
+    Task<Response<int>> UpdateMembersAsync(Members members);
+    Task<Response<int>> DeleteMembersByIdAsync(int Id);
+    Task<Response<List<Members>>> GetMemberByIdAsync(int Id);
+    Task<Response<List<Members>>> GetTheActiveMember();
 }

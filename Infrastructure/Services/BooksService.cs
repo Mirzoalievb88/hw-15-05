@@ -3,12 +3,14 @@ using Infrastructure.Interfaces;
 using Npgsql;
 using Dapper;
 using Infrastructure.Data;
+using Domain.ApiResponse;
+using System.Net;
 
 namespace Infrastructure.Services;
 
 public class BooksService(DataContext context) : IBooksService
 {
-    public async Task<int> CreateBookAsync(Books books)
+    public async Task<Response<string>> CreateBookAsync(Books books)
     {
         using (var connection = await context.GetConnectionAsync())
         {
@@ -16,21 +18,29 @@ public class BooksService(DataContext context) : IBooksService
             var cmd = @$"insert into Books(Title, Genre, PublicationYear, TotalCopies, AvailableCopies)
                                 values (@Title, @Genre, @PublicationYear, @TotalCopies, @AvailableCopies)";
             var result = await connection.ExecuteAsync(cmd, books);
-            return result;
+            if (result == null)
+            {
+                return new Response<string>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<string>(default, "All worked");
         }
     }
-    public async Task<List<Books>> GetBooksAsync()
+    public async Task<Response<List<Books>>> GetBooksAsync()
     {
         using (var connection = await context.GetConnectionAsync())
         {
             connection.Open();
             var cmd = @$"select * from Books";
             var result = await connection.QueryAsync<Books>(cmd);
-            return result.ToList();
+            if (result == null)
+            {
+                return new Response<List<Books>>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<List<Books>>(result.ToList(), "All worked");
         }
     }
  
-    public async Task<int> UpdateBookAsync(Books books)
+    public async Task<Response<string>> UpdateBookAsync(Books books)
     {
         using (var connection = await context.GetConnectionAsync())
         {
@@ -38,10 +48,14 @@ public class BooksService(DataContext context) : IBooksService
             var cmd = @$"update Books
                                 set Title = @Title, Genre = @Genre, PublicationYear = @PublicationYear, AvailableCopies = @AvailableCopies";
             var result = await connection.ExecuteAsync(cmd, books);
-            return result;
+            if (result == null)
+            {
+                return new Response<string>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<string>(result.ToString(), "All worked");
         }
     }
-    public async Task<int> DeleteBookAsync(int Id)
+    public async Task<Response<string>> DeleteBookAsync(int Id)
     {
         using (var connection = await context.GetConnectionAsync())
         {
@@ -49,21 +63,29 @@ public class BooksService(DataContext context) : IBooksService
             var cmd = @$"delete from Books
                                 where Id = @Id";
             var result = await connection.ExecuteAsync(cmd, @Id = Id);
-            return result;
+            if (result == null)
+            {
+                return new Response<string>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<string>(result.ToString(), "All worked");
         }
     }
 
 
-    public async Task<Books?> GetBookByIdAsync(int id)
+    public async Task<Response<Books>> GetBookByIdAsync(int id)
     {
         using var connection = await context.GetConnectionAsync();
         var cmd = @"select * from books
                     where bookid = @bookid";
         var result = await connection.QuerySingleOrDefaultAsync<Books>(cmd, new { bookid = id });
-        return result;
+        if (result == null)
+        {
+            return new Response<Books>("Result is null", HttpStatusCode.NotFound);
+        }
+        return new Response<Books>(result, "All worked");
     }
 
-    public async Task<List<Books>> GetThePopularBook()
+    public async Task<Response<List<Books>>> GetThePopularBook()
     {
         using (var connection = await context.GetConnectionAsync())
         {
@@ -72,11 +94,15 @@ public class BooksService(DataContext context) : IBooksService
                                 join borrowings b on b.BookId = bk.BookId
                                 group by bk.bookId";
             var result = await connection.QueryAsync<Books>(cmd);
-            return result.ToList();
+            if (result == null)
+            {
+                return new Response<List<Books>>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<List<Books>>(result.ToList(), "All worked");
         }
     }
 
-    public async Task<string> GetMostPopularGenre()
+    public async Task<Response<string>> GetMostPopularGenre()
     {
         using (var connection = await context.GetConnectionAsync())
         {
@@ -89,11 +115,15 @@ public class BooksService(DataContext context) : IBooksService
                                     limit 1;
                                 ";
             var result = await connection.QueryFirstOrDefaultAsync<string>(cmd);
-            return result;
+            if (result == null)
+            {
+                return new Response<string>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<string>(result, "All worked");
         }
     }
 
-    public async Task<List<Books>> GetBooksAndBorrowingsCount()
+    public async Task<Response<List<Books>>> GetBooksAndBorrowingsCount()
     {
         using (var connection = await context.GetConnectionAsync())
         {
@@ -104,7 +134,11 @@ public class BooksService(DataContext context) : IBooksService
                                     group BY b.Id, b.Title, b.Author
                                     having count(*) > 5";
             var result = await connection.QueryAsync<Books>(cmd);
-            return result.ToList();
+            if (result == null)
+            {
+                return new Response<List<Books>>("Result is null", HttpStatusCode.NotFound);
+            }
+            return new Response<List<Books>>(result.ToList(), "All worked");
         }
     }
 }
